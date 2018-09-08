@@ -1,7 +1,7 @@
 import warnings
 warnings.simplefilter('ignore', RuntimeWarning)
 import pandas as pd
-import tensorflow as tf
+#import tensorflow as tf
 import numpy as np
 import sklearn.metrics as sk
 
@@ -90,11 +90,19 @@ class User:
 			user_ratings[i,movie_id] = movie_rating
 			
 		return user_ratings
-	def similar_user(self, user, total_users):
+	def similar_user(self, user, total_users, k=5):
 		user = np.array(user).reshape(1, len(user))
 		total_users = np.array(total_users)
-		print(sk.pairwise.cosine_similarity(user, total_users))
-				
+		user_similarity = sk.pairwise.cosine_similarity(user, total_users)
+		user_similarity = user_similarity[0]
+		user_indices = np.argsort(user_similarity)
+		user_indices = list(map(lambda x: x+1, user_indices))
+		user_similarity.sort()
+		return user_indices[-k: -2]
+
+
+		
+
 user = User()
 user_1 = user.user_ratings
 user.similar_user(user_1[0], user_1)
